@@ -1,0 +1,13 @@
+﻿@model ProductCategoriesViewModel
+@section Title{
+    @if (Model != null)
+    {
+        <h3>Edit Product: @Model.Product.Name</h3>
+        <partial name="_Product" model="Model"></partial>
+    }
+    else
+    {
+        <h3>Error</h3>
+    }
+}
+

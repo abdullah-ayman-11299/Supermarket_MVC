@@ -1,0 +1,113 @@
+﻿@model SalesViewModel
+@section Title
+{
+    <div class="row mb-3">
+        <div class="col-7">
+            <h3>Cashier's Conssole'</h3>
+        </div>
+        <div class="col-2">
+            <label for="cashier">Cashier Name:</label>
+        </div>
+        <div class="col-3">
+            <label>Abdullah</label>
+        </div>
+        <hr>
+    </div>
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<div class="row">
+    <div class="col-4">
+        @*Category Selection*@
+        <select asp-for="SelectedCategoryId" class="form-control">
+            <option value="0">- Please Select Category -</option>
+            @if(Model.Categories.Count() > 0 && Model.Categories != null)
+            {
+                @foreach (var cat in Model.Categories)
+                {
+                    <option value="@cat.Id">@cat.Name</option>
+                }
+            }
+        </select>
+        <br />
+        <div id="productListPartial">
+            @*Product List*@
+        </div>
+        <br />
+        <div id="productDetailsPartial">
+            @*Product Details*@
+        </div>
+        @*sales Form*@
+        <form method="post" asp-action="sell" id="formSale" style="display: none">
+            <input type="hidden" asp-for="SelectedProductId"/>
+            <div class="form-group">
+                <label asp-for=QuantityToSell class="col-form-label"></label>
+                <input type="number" asp-for="QuantityToSell" class="form-control" value="@Model.QuantityToSell" min="1" />
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Sell"/>
+            </div>
+        </form>
+    </div>
+    <div class="col pd-2">
+        @*List of Transactions*@
+        @await Component.InvokeAsync("Transactions", "Cashier1")
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $(function(){
+            var productId=0;
+            //Initialize the form
+            $("#formSale").hide();
+            $("#QuantityToSell").val("");
+
+            //Load the products if category is already selected
+            var selectedCategoryId = $("#SelectedCategoryId").val();
+            if (selectedCategoryId > 0) 
+            {
+                LoadProducts(selectedCategoryId);
+            }
+
+            //Handle Category Selection
+            $("#SelectedCategoryId").on("change",function (){
+                LoadProducts($(this).val());
+            });
+            //Handle Product Selection
+            $('#productListPartial').on("click",".product-row",function()
+            {
+                //Highlight the row selected
+                    $(".product-row").removeClass("highlight");
+                    $(this).addClass("highlight");
+
+                    //Product id
+                    productId = $(this).attr("product-id");
+            });
+            //Handel Product Details
+            $("#productListPartial").on("click",function()
+            {
+                    $("#productDetailsPartial").load("/Sales/SellProductPartial",{id:productId});
+
+                if (productId > 0) {
+                    $("#SelectedProductId").val(productId);
+                    $("#formSale").show();
+                }else
+                {
+                    $("#SelectedProductId").val("");
+                    $("#formSale").hide();
+                }
+            });
+        });
+
+        function LoadProducts(categoryId)
+        {
+            $('#productListPartial').load("/products/ProductCategoryPartial", {
+                categoryId: categoryId
+            });
+            $("#productDetailsPartial").empty();
+            $("#formSale").hide();
+        }
+    </script>
+}
