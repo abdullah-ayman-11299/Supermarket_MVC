@@ -18,6 +18,7 @@ This project was created as a learning exercise to practice building real-world 
 ## 🧱 Project Structure
 
 Supermarket_MVC/
+
 ├── CoreBusiness/ // Domain models (Product, Category, Transaction)
 
 ├── UseCases/ // Business use cases and interfaces
