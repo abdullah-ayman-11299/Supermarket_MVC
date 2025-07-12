@@ -42,6 +42,6 @@ Supermarket_MVC/
    ```bash
    git clone https://github.com/abdullah-ayman-11299/Supermarket_MVC.git
    
-2. Open the solution in Visual Studio 2022 or later.
+2. Open the solution in Visual Studio 2022.
 
 3. Run the project (F5 or Ctrl+F5).
