@@ -38,7 +38,11 @@ namespace Plugins.DataStore.InMemory
 
         public void DeleteProduct(int productId)
         {
-            throw new NotImplementedException();
+            var productToDelete = GetProductById(productId);
+            if (productToDelete != null)
+            {
+                Products.Remove(productToDelete);
+            }
         }
 
         public IEnumerable<Product> GetProductByCategoryId(int categoryId)

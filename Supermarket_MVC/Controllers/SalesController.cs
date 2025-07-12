@@ -1,17 +1,31 @@
 ﻿//using CoreBusiness;
-using Supermarket_MVC.Models;
 using Supermarket_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using UseCases.CategoriesUseCases.Interfaces;
+using UseCases.ProductsUseCases;
+using UseCases.TransactionsUseCases;
 
 namespace Supermarket_MVC.Controllers
 {
     public class SalesController : Controller
     {
+        private readonly IViewCategoriesUseCase viewCategoriesUseCase;
+        private readonly ISelectedProductUseCase selectedProductUseCase;
+        private readonly IEditProductUseCase editProductUseCase;
+        private readonly IAddTransaction addTransaction;
+
+        public SalesController(IViewCategoriesUseCase viewCategoriesUseCase,ISelectedProductUseCase selectedProductUseCase,IEditProductUseCase editProductUseCase,IAddTransaction addTransaction)
+        {
+            this.viewCategoriesUseCase = viewCategoriesUseCase;
+            this.selectedProductUseCase = selectedProductUseCase;
+            this.editProductUseCase = editProductUseCase;
+            this.addTransaction = addTransaction;
+        }
         public IActionResult Index(int? selectedCategoryId)
         {
             var salesViewModel = new SalesViewModel
             {
-                Categories = CategoriesRepository.GetCategories(),
+                Categories = viewCategoriesUseCase.Execute(),
                 SelectedCategoryId = selectedCategoryId??0,
             };
             return View(salesViewModel);
@@ -20,10 +34,10 @@ namespace Supermarket_MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var pro = ProductRepository.GetProductById(salesViewModel.SelectedProductId);
+                var pro = selectedProductUseCase.Execute(salesViewModel.SelectedProductId);
                 if (pro != null)
                 {
-                    var trans = new Transaction
+                    var trans = new CoreBusiness.Transaction
                     {
                         CashierName = "Cashier1",
                         TimeStamp = DateTime.Now,
@@ -33,22 +47,22 @@ namespace Supermarket_MVC.Controllers
                         BeforeQty = pro.Quantity ?? 0,
                         SoldQty = salesViewModel.QuantityToSell ?? 0
                     };
-                    TransactionRepository.Add(trans);
+                    addTransaction.Execute(trans);
 
 
                     pro.Quantity -= salesViewModel.QuantityToSell;
-                    ProductRepository.UpdateProduct(salesViewModel.SelectedProductId, pro);
+                    editProductUseCase.Execute(salesViewModel.SelectedProductId, pro);
                 }
             }
-            var product = ProductRepository.GetProductById(salesViewModel.SelectedProductId);
+            var product = selectedProductUseCase.Execute(salesViewModel.SelectedProductId);
 
             salesViewModel.SelectedCategoryId = (product?.CategoryId == null)?0:product.CategoryId.Value;
-            salesViewModel.Categories = CategoriesRepository.GetCategories();
+            salesViewModel.Categories = viewCategoriesUseCase.Execute();
             return RedirectToAction(nameof(Index), new { selectedCategoryId = salesViewModel.SelectedCategoryId});
         }
         public IActionResult SellProductPartial(int id)
         {
-            var product = ProductRepository.GetProductById(id);
+            var product = selectedProductUseCase.Execute(id);
             return PartialView("_SellProduct", product);
         }
     }
