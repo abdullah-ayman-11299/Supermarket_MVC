@@ -33,7 +33,6 @@ Supermarket_MVC/
 - ASP.NET Core MVC (.NET 8)
 - C# and OOP
 - Clean Architecture pattern
-- Git & GitHub
 - Entity Framework Core *(planned)*
 - SQL Server *(planned)*
 
