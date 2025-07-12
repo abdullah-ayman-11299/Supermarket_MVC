@@ -19,8 +19,11 @@ This project was created as a learning exercise to practice building real-world 
 
 Supermarket_MVC/
 ├── CoreBusiness/ // Domain models (Product, Category, Transaction)
+
 ├── UseCases/ // Business use cases and interfaces
+
 ├── Plugins/ // Data storage (currently in-memory)
+
 ├── Supermarket_MVC/ // ASP.NET Core MVC application (UI and controllers)
 
 
