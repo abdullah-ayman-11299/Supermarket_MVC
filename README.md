@@ -30,7 +30,7 @@ Supermarket_MVC/
 
 ## 🛠 Technologies Used
 
-- ASP.NET Core MVC (.NET 6)
+- ASP.NET Core MVC (.NET 8)
 - C# and OOP
 - Clean Architecture pattern
 - Git & GitHub
