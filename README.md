@@ -42,5 +42,7 @@ Supermarket_MVC/
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/Supermarket_MVC.git
+   
 2.Open the solution in Visual Studio 2022 or later.
+
 3.Run the project (F5 or Ctrl+F5).
