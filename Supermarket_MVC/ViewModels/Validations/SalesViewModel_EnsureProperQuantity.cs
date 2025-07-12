@@ -11,27 +11,31 @@ namespace Supermarket_MVC.ViewModels.Validations
         {
             var selectedProductUseCase = validationContext.GetService(typeof(ISelectedProductUseCase)) as ISelectedProductUseCase;
 
-            var salesViewModel = validationContext.ObjectInstance as SalesViewModel;
-            if (salesViewModel != null)
+            if (selectedProductUseCase != null)
             {
-                if(salesViewModel.QuantityToSell <= 0 )
+                var salesViewModel = validationContext.ObjectInstance as SalesViewModel;
+                if (salesViewModel != null)
                 {
-                    return new ValidationResult("The Quantity to sell has to be greater than zero.");
-                }else
-                {
-                    var product = selectedProductUseCase!.Execute(salesViewModel.SelectedProductId);
-                    if (product != null)
+                    if (salesViewModel.QuantityToSell <= 0)
                     {
-                        if(product.Quantity < salesViewModel.QuantityToSell)
-                        {
-                            return new ValidationResult($"The {product.Name} only has {product.Quantity} left. It is not enough");
-                        }
+                        return new ValidationResult("The Quantity to sell has to be greater than zero.");
                     }
                     else
                     {
-                        return new ValidationResult($"The selected product doesn't exsist.");
+                        var product = selectedProductUseCase.Execute(salesViewModel.SelectedProductId);
+                        if (product != null)
+                        {
+                            if (product.Quantity < salesViewModel.QuantityToSell)
+                            {
+                                return new ValidationResult($"The {product.Name} only has {product.Quantity} left. It is not enough");
+                            }
+                        }
+                        else
+                        {
+                            return new ValidationResult($"The selected product doesn't exsist.");
+                        }
+
                     }
-                    
                 }
             }
             return ValidationResult.Success;

@@ -1,6 +1,6 @@
 ﻿//using CoreBusiness;
-using Supermarket_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Supermarket_MVC.ViewModels;
 using UseCases.CategoriesUseCases.Interfaces;
 using UseCases.ProductsUseCases;
 using UseCases.TransactionsUseCases;
@@ -14,7 +14,7 @@ namespace Supermarket_MVC.Controllers
         private readonly IEditProductUseCase editProductUseCase;
         private readonly IAddTransaction addTransaction;
 
-        public SalesController(IViewCategoriesUseCase viewCategoriesUseCase,ISelectedProductUseCase selectedProductUseCase,IEditProductUseCase editProductUseCase,IAddTransaction addTransaction)
+        public SalesController(IViewCategoriesUseCase viewCategoriesUseCase, ISelectedProductUseCase selectedProductUseCase, IEditProductUseCase editProductUseCase, IAddTransaction addTransaction)
         {
             this.viewCategoriesUseCase = viewCategoriesUseCase;
             this.selectedProductUseCase = selectedProductUseCase;
@@ -26,15 +26,15 @@ namespace Supermarket_MVC.Controllers
             var salesViewModel = new SalesViewModel
             {
                 Categories = viewCategoriesUseCase.Execute(),
-                SelectedCategoryId = selectedCategoryId??0,
+                SelectedCategoryId = selectedCategoryId ?? 0,
             };
             return View(salesViewModel);
         }
         public IActionResult Sell(SalesViewModel salesViewModel)
         {
+            var pro = selectedProductUseCase.Execute(salesViewModel.SelectedProductId);
             if (ModelState.IsValid)
             {
-                var pro = selectedProductUseCase.Execute(salesViewModel.SelectedProductId);
                 if (pro != null)
                 {
                     var trans = new CoreBusiness.Transaction
@@ -49,16 +49,20 @@ namespace Supermarket_MVC.Controllers
                     };
                     addTransaction.Execute(trans);
 
-
                     pro.Quantity -= salesViewModel.QuantityToSell;
+
                     editProductUseCase.Execute(salesViewModel.SelectedProductId, pro);
+
+                    salesViewModel.SelectedCategoryId = (pro?.CategoryId == null) ? 0 : pro.CategoryId.Value;
+                    salesViewModel.Categories = viewCategoriesUseCase.Execute();
+                    return RedirectToAction(nameof(Index), new { selectedCategoryId = salesViewModel.SelectedCategoryId });
+
                 }
             }
-            var product = selectedProductUseCase.Execute(salesViewModel.SelectedProductId);
 
-            salesViewModel.SelectedCategoryId = (product?.CategoryId == null)?0:product.CategoryId.Value;
+            salesViewModel.SelectedCategoryId = (pro?.CategoryId == null) ? 0 : pro.CategoryId.Value;
             salesViewModel.Categories = viewCategoriesUseCase.Execute();
-            return RedirectToAction(nameof(Index), new { selectedCategoryId = salesViewModel.SelectedCategoryId});
+            return View(nameof(Index), salesViewModel);
         }
         public IActionResult SellProductPartial(int id)
         {
