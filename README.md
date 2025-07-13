@@ -33,8 +33,8 @@ Supermarket_MVC/
 - ASP.NET Core MVC (.NET 8)
 - C# and OOP
 - Clean Architecture pattern
-- Entity Framework Core *(planned)*
-- SQL Server *(planned)*
+- Entity Framework Core
+- SQL Server
 
 ## 🚀 Getting Started
 
