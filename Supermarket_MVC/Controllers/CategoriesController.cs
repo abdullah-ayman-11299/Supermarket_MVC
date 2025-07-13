@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CoreBusiness;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UseCases.CategoriesUseCases.Interfaces;
 
 
 namespace Supermarket_MVC.Controllers
 {
+    [Authorize(Policy ="Inventories")]
     public class CategoriesController : Controller
     {
         private readonly IViewCategoriesUseCase viewCategoriesUseCase;
@@ -33,7 +36,7 @@ namespace Supermarket_MVC.Controllers
             return View(category);
         }
         [HttpPost]
-        public IActionResult Edit(CoreBusiness.Category catToEdit)
+        public IActionResult Edit(Category catToEdit)
         {
             ViewBag.Action = "Edit";
 
@@ -51,7 +54,7 @@ namespace Supermarket_MVC.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Add(CoreBusiness.Category catToAdd)
+        public IActionResult Add(Category catToAdd)
         {
             ViewBag.Action = "Add";
 

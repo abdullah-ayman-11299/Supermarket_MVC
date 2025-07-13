@@ -3,9 +3,12 @@ using Supermarket_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using UseCases.ProductsUseCases;
 using UseCases.CategoriesUseCases.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using CoreBusiness;
 
 namespace Supermarket_MVC.Controllers
 {
+    [Authorize(Policy = "Inventories")]
     public class ProductsController : Controller
     {
         private readonly IViewCategoriesUseCase viewCategoriesUseCase;
@@ -13,17 +16,15 @@ namespace Supermarket_MVC.Controllers
         private readonly ISelectedProductUseCase selectedProductUseCase;
         private readonly IEditProductUseCase editProductUseCase;
         private readonly IDeleteProductUseCase deleteProductUseCase;
-        private readonly IViewProductsByCategoryUseCase viewProductsByCategoryUseCase;
         private readonly IViewProductsUseCase viewProductsUseCase;
 
-        public ProductsController(IViewCategoriesUseCase viewCategoriesUseCase,IAddProductUseCase addProductUseCase , ISelectedProductUseCase selectedProductUseCase ,IEditProductUseCase editProductUseCase, IDeleteProductUseCase deleteProductUseCase , IViewProductsByCategoryUseCase viewProductsByCategoryUseCase , IViewProductsUseCase viewProductsUseCase)
+        public ProductsController(IViewCategoriesUseCase viewCategoriesUseCase,IAddProductUseCase addProductUseCase , ISelectedProductUseCase selectedProductUseCase ,IEditProductUseCase editProductUseCase, IDeleteProductUseCase deleteProductUseCase , IViewProductsUseCase viewProductsUseCase)
         {
             this.viewCategoriesUseCase = viewCategoriesUseCase;
             this.addProductUseCase = addProductUseCase;
             this.selectedProductUseCase = selectedProductUseCase;
             this.editProductUseCase = editProductUseCase;
             this.deleteProductUseCase = deleteProductUseCase;
-            this.viewProductsByCategoryUseCase = viewProductsByCategoryUseCase;
             this.viewProductsUseCase = viewProductsUseCase;
         }
         public IActionResult Index()
@@ -37,7 +38,7 @@ namespace Supermarket_MVC.Controllers
             ViewBag.Action = "Edit";
             var productViewModel = new ProductCategoriesViewModel
             {
-                Product = selectedProductUseCase.Execute(id)?? new CoreBusiness.Product(),
+                Product = selectedProductUseCase.Execute(id)?? new Product(),
                 categories = viewCategoriesUseCase.Execute()
             };
             return View(productViewModel);
@@ -81,12 +82,6 @@ namespace Supermarket_MVC.Controllers
         {
             deleteProductUseCase.Execute(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        public IActionResult ProductCategoryPartial(int categoryId)
-        {
-            var products = viewProductsByCategoryUseCase.Execute(categoryId);
-            return PartialView("_Products",products);
         }
     }
 }

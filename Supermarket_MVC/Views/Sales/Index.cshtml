@@ -9,7 +9,7 @@
             <label for="cashier">Cashier Name:</label>
         </div>
         <div class="col-3">
-            <label>Abdullah</label>
+            @User.Identity?.Name
         </div>
         <hr>
     </div>
@@ -103,7 +103,7 @@
 
         function LoadProducts(categoryId)
         {
-            $('#productListPartial').load("/products/ProductCategoryPartial", {
+            $('#productListPartial').load("/sales/ProductCategoryPartial", {
                 categoryId: categoryId
             });
             $("#productDetailsPartial").empty();

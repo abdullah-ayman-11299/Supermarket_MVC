@@ -1,4 +1,5 @@
-﻿//using CoreBusiness;
+﻿using CoreBusiness;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Supermarket_MVC.ViewModels;
 using UseCases.CategoriesUseCases.Interfaces;
@@ -7,19 +8,23 @@ using UseCases.TransactionsUseCases;
 
 namespace Supermarket_MVC.Controllers
 {
+    [Authorize(Policy = "Cashiers")]
     public class SalesController : Controller
     {
         private readonly IViewCategoriesUseCase viewCategoriesUseCase;
         private readonly ISelectedProductUseCase selectedProductUseCase;
         private readonly IEditProductUseCase editProductUseCase;
         private readonly IAddTransaction addTransaction;
+        private readonly IViewProductsByCategoryUseCase viewProductsByCategoryUseCase;
 
-        public SalesController(IViewCategoriesUseCase viewCategoriesUseCase, ISelectedProductUseCase selectedProductUseCase, IEditProductUseCase editProductUseCase, IAddTransaction addTransaction)
+        public SalesController(IViewCategoriesUseCase viewCategoriesUseCase, ISelectedProductUseCase selectedProductUseCase, IEditProductUseCase editProductUseCase, IAddTransaction addTransaction, IViewProductsByCategoryUseCase viewProductsByCategoryUseCase)
         {
             this.viewCategoriesUseCase = viewCategoriesUseCase;
             this.selectedProductUseCase = selectedProductUseCase;
             this.editProductUseCase = editProductUseCase;
             this.addTransaction = addTransaction;
+            this.viewProductsByCategoryUseCase = viewProductsByCategoryUseCase;
+
         }
         public IActionResult Index(int? selectedCategoryId)
         {
@@ -37,7 +42,7 @@ namespace Supermarket_MVC.Controllers
             {
                 if (pro != null)
                 {
-                    var trans = new CoreBusiness.Transaction
+                    var trans = new Transaction
                     {
                         CashierName = "Cashier1",
                         TimeStamp = DateTime.Now,
@@ -68,6 +73,11 @@ namespace Supermarket_MVC.Controllers
         {
             var product = selectedProductUseCase.Execute(id);
             return PartialView("_SellProduct", product);
+        }
+        public IActionResult ProductCategoryPartial(int categoryId)
+        {
+            var products = viewProductsByCategoryUseCase.Execute(categoryId);
+            return PartialView("_Products", products);
         }
     }
 }

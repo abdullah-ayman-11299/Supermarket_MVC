@@ -1,9 +1,11 @@
 ﻿using Supermarket_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using UseCases.TransactionsUseCases.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Supermarket_MVC.Controllers
 {
+    [Authorize]
     public class TransactionsController : Controller
     {
         private readonly ITransactionsSearch transactionsSearch;

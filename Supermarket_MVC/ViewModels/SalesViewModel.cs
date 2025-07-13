@@ -1,4 +1,4 @@
-﻿//using CoreBusiness;
+﻿using CoreBusiness;
 
 using Supermarket_MVC.ViewModels.Validations;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +8,7 @@ namespace Supermarket_MVC.ViewModels
     public class SalesViewModel
     {
         public int SelectedCategoryId { get; set; }
-        public IEnumerable<CoreBusiness.Category> Categories { get; set; } = Enumerable.Empty<CoreBusiness.Category>();
+        public IEnumerable<Category> Categories { get; set; } = Enumerable.Empty<Category>();
 
         public int SelectedProductId { get; set; }
         [Display(Name ="Quantity")]
